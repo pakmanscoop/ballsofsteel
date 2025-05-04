@@ -31,7 +31,7 @@ class NavigationLayer {
         
         // Create cursor element
         this.cursor = document.createElement('div');
-        this.cursor.style.position = 'fixed';
+        this.cursor.style.position = 'absolute';
         this.cursor.style.width = '15px';
         this.cursor.style.height = '15px';
         this.cursor.style.backgroundColor = this.isNightMode ? '#ffffff' : '#000000';
