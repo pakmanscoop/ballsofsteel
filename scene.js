@@ -62,7 +62,7 @@ class ThreeSceneManager {
             this.camera.lookAt(this.scene ? this.scene.position : {x:0,y:0,z:0});
         }
         // Adjust Benday dot size for phone/desktop mode on all ball materials
-        const dotSize = this.isMobileDevice() ? 1.2 : 1.1;
+        const dotSize = this.isMobileDevice() ? 1.3 : 1.1;
         const dotSpacing = this.isMobileDevice() ? 0.018 : 0.02;
         // Update global bendayMaterial if present
         if (this.bendayMaterial && this.bendayMaterial.uniforms) {
