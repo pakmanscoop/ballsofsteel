@@ -26,9 +26,6 @@ class NavigationLayer {
         this.ballVisualizationLayers = [];
         this.ballVisualizationCircles = {};
         
-        // Hide system cursor
-        document.body.style.cursor = 'none';
-        
         // Create cursor element
         this.cursor = document.createElement('div');
         this.cursor.style.position = 'absolute';
@@ -37,6 +34,7 @@ class NavigationLayer {
         this.cursor.style.backgroundColor = this.isNightMode ? '#ffffff' : '#000000';
         this.cursor.style.zIndex = '9999';
         this.cursor.style.pointerEvents = 'none';
+        this.cursor.style.display = 'none'; // Initially hidden
 
         // Add keyboard event listeners
         document.addEventListener('keydown', (e) => {
@@ -56,8 +54,16 @@ class NavigationLayer {
         // Track cursor position using pointer events
         this.updateCursorPosition = (e) => {
             if (!isTouchDevice) {
-                this.cursor.style.left = (e.clientX - 7.5) + 'px';
-                this.cursor.style.top = (e.clientY - 7.5) + 'px';
+                const isOverContainer = this.container.contains(e.target) || this.container === e.target;
+                if (isOverContainer) {
+                    this.cursor.style.display = 'block';
+                    this.cursor.style.left = (e.clientX - 7.5) + 'px';
+                    this.cursor.style.top = (e.clientY - 7.5) + 'px';
+                    document.body.style.cursor = 'none';
+                } else {
+                    this.cursor.style.display = 'none';
+                    document.body.style.cursor = 'auto';
+                }
             }
         };
         
