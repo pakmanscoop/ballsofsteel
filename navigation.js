@@ -82,7 +82,7 @@ class NavigationLayer {
         this.navigationContainer.style.position = 'absolute';
         this.navigationContainer.style.width = '100%';
         this.navigationContainer.style.height = '100%';
-        this.navigationContainer.style.pointerEvents = 'none';
+        this.navigationContainer.style.pointerEvents = 'none'; // Keep as none
         this.navigationContainer.style.zIndex = '1000';
         this.navigationContainer.style.top = '0';
         this.navigationContainer.style.left = '0';
@@ -94,10 +94,12 @@ class NavigationLayer {
         // Create left arrow
         this.leftArrow = this.createArrow('left');
         this.navigationContainer.appendChild(this.leftArrow);
+        this.leftArrow.style.pointerEvents = 'auto';
 
         // Create right arrow
         this.rightArrow = this.createArrow('right');
         this.navigationContainer.appendChild(this.rightArrow);
+        this.rightArrow.style.pointerEvents = 'auto';
 
         // Add event listeners
         this.leftArrow.addEventListener('click', (e) => {
@@ -148,11 +150,14 @@ class NavigationLayer {
             const w = window.innerWidth;
             if (e.clientX < w * 0.4) {
                 this.navigate('prev');
-            } else if (e.clientX > w * 0.6) {
+            } else if (e.clientX >= w * 0.6) {
                 this.navigate('next');
             }
             this._regionNavPointerDown = null;
         });
+
+        // Add pointer events to the container for region-based navigation
+        this.container.style.pointerEvents = 'auto';
     }
 
     createBlockDisplay() {
@@ -164,6 +169,7 @@ class NavigationLayer {
         this.blockDisplay.style.zIndex = '1001';
         this.blockDisplay.style.fontFamily = 'Courier Prime, monospace';
         this.blockDisplay.style.cursor = 'none';
+        this.blockDisplay.style.pointerEvents = 'auto'; // Enable pointer events for block display
         this.navigationContainer.appendChild(this.blockDisplay);
 
         // Create current block display
@@ -220,7 +226,7 @@ class NavigationLayer {
             this.currentBlockDisplay.innerHTML = `Block #${blockNumber}`;
         } else {
             // Restore display
-            this.currentBlockDisplay.style.fontSize = '18px';
+            this.currentBlockDisplay.style.fontSize = '16px';
             this.currentBlockDisplay.style.opacity = '1';
             this.blockHistoryContainer.style.display = 'flex';
             this.blockHistoryContainer.style.opacity = '1';
@@ -588,12 +594,12 @@ class NavigationLayer {
         this.colorPalettePanel.style.right = '20px';
         this.colorPalettePanel.style.zIndex = '1001';
         this.colorPalettePanel.style.fontFamily = 'Courier Prime, monospace';
-        this.colorPalettePanel.style.pointerEvents = 'auto';
+        this.colorPalettePanel.style.pointerEvents = 'auto'; // Enable pointer events for color palette
         this.navigationContainer.appendChild(this.colorPalettePanel);
 
         // Create heading
         const heading = document.createElement('div');
-        heading.style.fontSize = '15px';
+        heading.style.fontSize = '14px';
         heading.style.marginBottom = '10px';
         heading.style.color = this.isNightMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)';
         heading.style.cursor = 'none';
@@ -717,7 +723,7 @@ class NavigationLayer {
         this.ballVisualizationContainer.style.bottom = '60px';
         this.ballVisualizationContainer.style.left = '30px';
         this.ballVisualizationContainer.style.zIndex = '1001';
-        this.ballVisualizationContainer.style.pointerEvents = 'auto';
+        this.ballVisualizationContainer.style.pointerEvents = 'auto'; // Enable pointer events for ball visualization
         this.ballVisualizationContainer.style.cursor = 'none';
         this.navigationContainer.appendChild(this.ballVisualizationContainer);
 
