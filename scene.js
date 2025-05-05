@@ -58,7 +58,7 @@ class ThreeSceneManager {
     adjustCameraForDevice() {
         if (this.camera) {
             // Slightly further away on phone
-            this.camera.position.set(0, 0, this.isMobileDevice() ? 240 : 200);
+            this.camera.position.set(0, 0, this.isMobileDevice() ? 280 : 200);
             this.camera.lookAt(this.scene ? this.scene.position : {x:0,y:0,z:0});
         }
         // Adjust Benday dot size for phone/desktop mode on all ball materials
