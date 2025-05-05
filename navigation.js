@@ -82,7 +82,7 @@ class NavigationLayer {
         this.navigationContainer.style.position = 'absolute';
         this.navigationContainer.style.width = '100%';
         this.navigationContainer.style.height = '100%';
-        this.navigationContainer.style.pointerEvents = 'none'; // Keep as none
+        this.navigationContainer.style.pointerEvents = 'none';
         this.navigationContainer.style.zIndex = '1000';
         this.navigationContainer.style.top = '0';
         this.navigationContainer.style.left = '0';
@@ -94,12 +94,10 @@ class NavigationLayer {
         // Create left arrow
         this.leftArrow = this.createArrow('left');
         this.navigationContainer.appendChild(this.leftArrow);
-        this.leftArrow.style.pointerEvents = 'auto';
 
         // Create right arrow
         this.rightArrow = this.createArrow('right');
         this.navigationContainer.appendChild(this.rightArrow);
-        this.rightArrow.style.pointerEvents = 'auto';
 
         // Add event listeners
         this.leftArrow.addEventListener('click', (e) => {
@@ -150,14 +148,11 @@ class NavigationLayer {
             const w = window.innerWidth;
             if (e.clientX < w * 0.4) {
                 this.navigate('prev');
-            } else if (e.clientX >= w * 0.6) {
+            } else if (e.clientX > w * 0.6) {
                 this.navigate('next');
             }
             this._regionNavPointerDown = null;
         });
-
-        // Add pointer events to the container for region-based navigation
-        this.container.style.pointerEvents = 'auto';
     }
 
     createBlockDisplay() {
@@ -169,7 +164,6 @@ class NavigationLayer {
         this.blockDisplay.style.zIndex = '1001';
         this.blockDisplay.style.fontFamily = 'Courier Prime, monospace';
         this.blockDisplay.style.cursor = 'none';
-        this.blockDisplay.style.pointerEvents = 'auto'; // Enable pointer events for block display
         this.navigationContainer.appendChild(this.blockDisplay);
 
         // Create current block display
@@ -179,7 +173,7 @@ class NavigationLayer {
         this.currentBlockDisplay.style.color = this.isNightMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)';
         this.currentBlockDisplay.style.transition = 'all 1s ease';
         this.currentBlockDisplay.style.pointerEvents = 'auto';
-        this.currentBlockDisplay.style.opacity = '0.6';
+        this.currentBlockDisplay.style.opacity = '0.5';
         this.blockDisplay.appendChild(this.currentBlockDisplay);
 
         // Create block history container
@@ -217,7 +211,7 @@ class NavigationLayer {
         if (this.isBlockDisplayMinimized) {
             // Minimize display
             this.currentBlockDisplay.style.fontSize = '16px';
-            this.currentBlockDisplay.style.opacity = '0.6';
+            this.currentBlockDisplay.style.opacity = '0.5';
             this.blockHistoryContainer.style.opacity = '0';
             this.blockHistoryContainer.style.display = 'none';
             
@@ -226,7 +220,6 @@ class NavigationLayer {
             this.currentBlockDisplay.innerHTML = `Block #${blockNumber}`;
         } else {
             // Restore display
-            this.currentBlockDisplay.style.fontSize = '16px';
             this.currentBlockDisplay.style.opacity = '1';
             this.blockHistoryContainer.style.display = 'flex';
             this.blockHistoryContainer.style.opacity = '1';
@@ -582,8 +575,72 @@ class NavigationLayer {
     }
 
     onResize() {
-        this.navigationContainer.style.width = this.container.clientWidth + 'px';
-        this.navigationContainer.style.height = this.container.clientHeight + 'px';
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+
+        // Update navigation container size
+        this.navigationContainer.style.width = width + 'px';
+        this.navigationContainer.style.height = height + 'px';
+
+        // Update arrow positions
+        this.updateArrowPositions();
+
+        // Update ball visualization position
+        if (this.ballVisualizationContainer) {
+            this.ballVisualizationContainer.style.bottom = '60px';
+            this.ballVisualizationContainer.style.left = '30px';
+        }
+
+        // Update color palette panel position if it exists
+        if (this.colorPalettePanel) {
+            // Get current position
+            const currentRight = parseInt(this.colorPalettePanel.style.right) || 30;
+            const currentTop = parseInt(this.colorPalettePanel.style.top) || 30;
+            
+            // Ensure panel stays within bounds
+            const maxRight = width - 200; // Leave some space for the panel
+            const maxTop = height - 200;  // Leave some space for the panel
+            
+            // Update position while maintaining relative position
+            this.colorPalettePanel.style.right = `${Math.min(currentRight, maxRight)}px`;
+            this.colorPalettePanel.style.top = `${Math.min(currentTop, maxTop)}px`;
+        }
+    }
+
+    updateArrowPositions() {
+        if (!this.leftArrow || !this.rightArrow) return;
+
+        const isPortrait = this.container.clientHeight > this.container.clientWidth;
+        const isMobile = this.container.clientWidth < 768;
+
+        if (isPortrait) {
+            // Portrait mode - position at bottom
+            this.leftArrow.style.top = 'auto';
+            this.leftArrow.style.bottom = '120px';
+            this.leftArrow.style.left = '35%';
+            this.leftArrow.style.transform = 'translateX(-50%)';
+
+            this.rightArrow.style.top = 'auto';
+            this.rightArrow.style.bottom = '120px';
+            this.rightArrow.style.right = '35%';
+            this.rightArrow.style.transform = 'translateX(50%)';
+        } else {
+            // Landscape mode - position at sides
+            this.leftArrow.style.top = '50%';
+            this.leftArrow.style.bottom = 'auto';
+            this.leftArrow.style.transform = 'translateY(-50%)';
+            
+            this.rightArrow.style.top = '50%';
+            this.rightArrow.style.bottom = 'auto';
+            this.rightArrow.style.transform = 'translateY(-50%)';
+
+            const modelWidth = isMobile ? 0.6 : 0.33;
+            const availableSpace = (1 - modelWidth) / 2;
+            const arrowPosition = availableSpace / 2;
+
+            this.leftArrow.style.left = `${arrowPosition * 100}%`;
+            this.rightArrow.style.right = `${arrowPosition * 100}%`;
+        }
     }
 
     createColorPalettePanel() {
@@ -594,12 +651,12 @@ class NavigationLayer {
         this.colorPalettePanel.style.right = '20px';
         this.colorPalettePanel.style.zIndex = '1001';
         this.colorPalettePanel.style.fontFamily = 'Courier Prime, monospace';
-        this.colorPalettePanel.style.pointerEvents = 'auto'; // Enable pointer events for color palette
+        this.colorPalettePanel.style.pointerEvents = 'auto';
         this.navigationContainer.appendChild(this.colorPalettePanel);
 
         // Create heading
         const heading = document.createElement('div');
-        heading.style.fontSize = '14px';
+        heading.style.fontSize = '15px';
         heading.style.marginBottom = '10px';
         heading.style.color = this.isNightMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)';
         heading.style.cursor = 'none';
@@ -723,7 +780,7 @@ class NavigationLayer {
         this.ballVisualizationContainer.style.bottom = '60px';
         this.ballVisualizationContainer.style.left = '30px';
         this.ballVisualizationContainer.style.zIndex = '1001';
-        this.ballVisualizationContainer.style.pointerEvents = 'auto'; // Enable pointer events for ball visualization
+        this.ballVisualizationContainer.style.pointerEvents = 'auto';
         this.ballVisualizationContainer.style.cursor = 'none';
         this.navigationContainer.appendChild(this.ballVisualizationContainer);
 
