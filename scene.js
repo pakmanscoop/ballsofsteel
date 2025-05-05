@@ -37,6 +37,16 @@ class ThreeSceneManager {
         
         // Initialize navigation layer
         this.navigationLayer = new NavigationLayer(this);
+
+        // Add ResizeObserver to handle container resizing
+        this.resizeObserver = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                if (entry.target === this.container) {
+                    this.onWindowResize();
+                }
+            }
+        });
+        this.resizeObserver.observe(this.container);
     }
 
     // Utility to detect mobile devices (same logic as navigation.js)
@@ -392,6 +402,11 @@ class ThreeSceneManager {
         
         // Update navigation layer size
         this.navigationLayer.onResize();
+
+        // Update shader screen size
+        if (this.bendayMaterial) {
+            this.bendayMaterial.uniforms.screenSize.value.set(width, height);
+        }
     }
 
     animate() {
